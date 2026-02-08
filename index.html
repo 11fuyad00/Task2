@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animated Gold Numbers</title>
+  <title>Animated Box with Counter</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
@@ -12,38 +12,101 @@
       theme: {
         extend: {
           colors: {
-            'gold': {
-              'light': '#FFD700',
-              'DEFAULT': '#D4AF37',
-              'dark': '#B8860B',
-            },
-            'premium': {
-              'bg': '#0F172A',
-              'card': '#1E293B',
-            }
+            'navy': '#1a237e',
+            'gold': '#D4AF37',
           },
           animation: {
-            'pulse-gold': 'pulse-gold 2s infinite',
-            'bounce-slow': 'bounce-slow 3s infinite',
-            'count-up': 'count-up 2s ease-out forwards',
+            'open-lid': 'open-lid 0.8s ease-out forwards',
+            'close-lid': 'close-lid 0.8s ease-out forwards',
+            'unlock': 'unlock 0.5s ease-out forwards',
+            'lock': 'lock 0.5s ease-out forwards',
+            'counter-emerge': 'counter-emerge 1.5s ease-out forwards',
+            'pulse-glow': 'pulse-glow 2s infinite',
             'float': 'float 3s ease-in-out infinite',
+            'light-beam': 'light-beam 1.5s ease-out forwards',
+            'sparkle': 'sparkle 1s ease-out forwards',
+            'lightning-flash': 'lightning-flash 0.3s ease-out',
           },
           keyframes: {
-            'pulse-gold': {
-              '0%, 100%': { boxShadow: '0 0 5px rgba(212, 175, 55, 0.5)' },
-              '50%': { boxShadow: '0 0 20px rgba(212, 175, 55, 0.8)' },
+            'open-lid': {
+              '0%': { transform: 'rotateX(0deg)' },
+              '100%': { transform: 'rotateX(-120deg)' },
             },
-            'bounce-slow': {
-              '0%, 100%': { transform: 'translateY(0)' },
-              '50%': { transform: 'translateY(-10px)' },
+            'close-lid': {
+              '0%': { transform: 'rotateX(-120deg)' },
+              '100%': { transform: 'rotateX(0deg)' },
             },
-            'count-up': {
-              '0%': { opacity: '0', transform: 'translateY(20px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
+            'unlock': {
+              '0%': { transform: 'rotate(0deg) scale(1)' },
+              '50%': { transform: 'rotate(-30deg) scale(1.2)' },
+              '100%': { transform: 'rotate(0deg) scale(1)' },
+            },
+            'lock': {
+              '0%': { transform: 'rotate(0deg) scale(1)' },
+              '50%': { transform: 'rotate(30deg) scale(0.8)' },
+              '100%': { transform: 'rotate(0deg) scale(1)' },
+            },
+            'counter-emerge': {
+              '0%': {
+                transform: 'translateY(100px) scale(0.3)',
+                opacity: '0',
+                filter: 'blur(10px)'
+              },
+              '60%': {
+                transform: 'translateY(-20px) scale(1.1)',
+                opacity: '1',
+                filter: 'blur(2px)'
+              },
+              '100%': {
+                transform: 'translateY(0) scale(1)',
+                opacity: '1',
+                filter: 'blur(0)'
+              }
+            },
+            'pulse-glow': {
+              '0%, 100%': {
+                boxShadow: '0 0 15px rgba(212, 175, 55, 0.6)',
+                transform: 'scale(1)'
+              },
+              '50%': {
+                boxShadow: '0 0 30px rgba(212, 175, 55, 0.9)',
+                transform: 'scale(1.02)'
+              },
             },
             'float': {
-              '0%, 100%': { transform: 'translateY(0)' },
-              '50%': { transform: 'translateY(-15px)' },
+              '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+              '50%': { transform: 'translateY(-15px) rotate(1deg)' },
+            },
+            'light-beam': {
+              '0%': {
+                transform: 'translateX(-100%) rotate(45deg)',
+                opacity: '0'
+              },
+              '50%': {
+                opacity: '0.8'
+              },
+              '100%': {
+                transform: 'translateX(100%) rotate(45deg)',
+                opacity: '0'
+              },
+            },
+            'sparkle': {
+              '0%': {
+                transform: 'scale(0) rotate(0deg)',
+                opacity: '0'
+              },
+              '50%': {
+                transform: 'scale(1.3) rotate(180deg)',
+                opacity: '1'
+              },
+              '100%': {
+                transform: 'scale(0) rotate(360deg)',
+                opacity: '0'
+              }
+            },
+            'lightning-flash': {
+              '0%, 100%': { opacity: '0' },
+              '50%': { opacity: '1' },
             }
           }
         }
@@ -53,249 +116,535 @@
   <style>
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
-      background: linear-gradient(135deg, #0F172A 0%, #1E1E2E 100%);
+      background: linear-gradient(135deg, #0F172A 0%, #1a237e 100%);
+      min-height: 100vh;
     }
 
-    .gold-text-gradient {
-      background: linear-gradient(to right, #FFD700, #D4AF37, #B8860B);
+    .profile-image {
+      border: 4px solid transparent;
+      background: linear-gradient(45deg, #D4AF37, #FFD700, #B8860B) border-box;
+      border-radius: 50%;
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+
+    .box-container {
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 320px;
+      height: 180px;
+    }
+
+    .box-body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, #2d3748, #1a202c);
+      border-radius: 10px;
+      border: 3px solid rgba(212, 175, 55, 0.5);
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .box-lid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, #4a5568, #2d3748);
+      border-radius: 10px;
+      border: 3px solid rgba(212, 175, 55, 0.5);
+      border-bottom: none;
+      transform-origin: top;
+      transform-style: preserve-3d;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box-inside {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, #1a202c, #0F172A);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .light-beam {
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg,
+          transparent 0%,
+          rgba(255, 215, 0, 0.3) 25%,
+          rgba(255, 215, 0, 0.8) 50%,
+          rgba(255, 215, 0, 0.3) 75%,
+          transparent 100%);
+      pointer-events: none;
+      z-index: 5;
+      filter: blur(1px);
+    }
+
+    .sparkle {
+      position: absolute;
+      background: #FFD700;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 20;
+      filter: blur(1px);
+    }
+
+    .counter-number {
+      font-family: 'Arial Black', 'Arial Bold', sans-serif;
+      font-size: 5rem;
+      text-shadow:
+        0 0 20px rgba(255, 215, 0, 0.8),
+        0 0 40px rgba(255, 215, 0, 0.4),
+        0 0 60px rgba(255, 215, 0, 0.2);
+      position: relative;
+      z-index: 15;
+      background: linear-gradient(to bottom, #FFD700, #D4AF37, #B8860B);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .gold-border-gradient {
-      border: 2px solid transparent;
-      background: linear-gradient(#0F172A, #0F172A) padding-box,
-        linear-gradient(to right, #D4AF37, #B8860B) border-box;
+    .lock-icon {
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 20;
     }
 
-    .number-display {
-      font-family: 'Arial Black', 'Arial Bold', sans-serif;
+    .lightning {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .box-container:hover .lock-icon {
+      transform: scale(1.1);
+      color: #FFD700;
+    }
+
+    .keyhole {
+      position: absolute;
+      width: 20px;
+      height: 30px;
+      background: #B8860B;
+      border-radius: 10px 10px 0 0;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .tala-animation {
+      position: relative;
     }
   </style>
 </head>
 
-<body class="min-h-screen text-white p-4 md:p-8">
-  <div class="max-w-6xl mx-auto">
-    <!-- Header -->
-    <header class="text-center mb-10 md:mb-16">
-      <h1 class="text-3xl md:text-5xl font-bold gold-text-gradient mb-4">
-        <i class="fas fa-crown mr-4"></i>Premium Gold Statistics
-      </h1>
-      <p class="text-gray-300 max-w-2xl mx-auto">Real-time animated metrics with gold-themed icons. Watch the numbers
-        count up and icons animate.</p>
-    </header>
-
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-      <!-- First Stat Card -->
-      <div class="premium-card gold-border-gradient rounded-2xl p-6 shadow-xl animate-count-up">
-        <div class="flex items-center justify-between mb-4">
-          <div
-            class="w-14 h-14 bg-gradient-to-br from-gold-light to-gold-dark rounded-full flex items-center justify-center animate-pulse-gold">
-            <i class="fas fa-users text-2xl text-gray-900"></i>
-          </div>
-          <span class="text-sm font-semibold bg-gold text-gray-900 px-3 py-1 rounded-full">Total</span>
-        </div>
-        <h3 class="text-gray-400 text-sm font-medium mb-2">Active Users</h3>
-        <div class="flex items-end">
-          <div class="number-display text-4xl md:text-5xl font-bold gold-text-gradient" id="counter1">0</div>
-          <div class="ml-2 mb-1">
-            <i class="fas fa-arrow-up text-green-400"></i>
-            <span class="text-green-400 text-sm font-semibold">+1500</span>
-          </div>
-        </div>
-        <p class="text-gray-400 text-sm mt-2">Updated in real-time</p>
-      </div>
-
-      <!-- Second Stat Card -->
-      <div class="premium-card gold-border-gradient rounded-2xl p-6 shadow-xl animate-count-up"
-        style="animation-delay: 0.2s;">
-        <div class="flex items-center justify-between mb-4">
-          <div
-            class="w-14 h-14 bg-gradient-to-br from-gold-light to-gold-dark rounded-full flex items-center justify-center animate-pulse-gold">
-            <i class="fas fa-percentage text-2xl text-gray-900"></i>
-          </div>
-          <span class="text-sm font-semibold bg-gold text-gray-900 px-3 py-1 rounded-full">Score</span>
-        </div>
-        <h3 class="text-gray-400 text-sm font-medium mb-2">Success Rate</h3>
-        <div class="flex items-end">
-          <div class="number-display text-4xl md:text-5xl font-bold gold-text-gradient" id="counter2">0</div>
-          <div class="ml-2 mb-1">
-            <i class="fas fa-star text-yellow-400"></i>
-            <span class="text-yellow-400 text-sm font-semibold">Excellent</span>
-          </div>
-        </div>
-        <p class="text-gray-400 text-sm mt-2">Performance metric</p>
-      </div>
-
-      <!-- Third Stat Card -->
-      <div class="premium-card gold-border-gradient rounded-2xl p-6 shadow-xl animate-count-up"
-        style="animation-delay: 0.4s;">
-        <div class="flex items-center justify-between mb-4">
-          <div
-            class="w-14 h-14 bg-gradient-to-br from-gold-light to-gold-dark rounded-full flex items-center justify-center animate-pulse-gold">
-            <i class="fas fa-wifi text-2xl text-gray-900"></i>
-          </div>
-          <span class="text-sm font-semibold bg-gold text-gray-900 px-3 py-1 rounded-full">Live</span>
-        </div>
-        <h3 class="text-gray-400 text-sm font-medium mb-2">Online Now</h3>
-        <div class="flex items-end">
-          <div class="number-display text-4xl md:text-5xl font-bold gold-text-gradient" id="counter3">0</div>
-          <div class="ml-2 mb-1">
-            <i class="fas fa-circle text-red-500 animate-pulse"></i>
-            <span class="text-red-400 text-sm font-semibold">Active</span>
-          </div>
-        </div>
-        <p class="text-gray-400 text-sm mt-2">Currently connected</p>
-      </div>
-
-      <!-- Fourth Stat Card -->
-      <div class="premium-card gold-border-gradient rounded-2xl p-6 shadow-xl animate-count-up"
-        style="animation-delay: 0.6s;">
-        <div class="flex items-center justify-between mb-4">
-          <div
-            class="w-14 h-14 bg-gradient-to-br from-gold-light to-gold-dark rounded-full flex items-center justify-center animate-pulse-gold">
-            <i class="fas fa-coins text-2xl text-gray-900"></i>
-          </div>
-          <span class="text-sm font-semibold bg-gold text-gray-900 px-3 py-1 rounded-full">Bonus</span>
-        </div>
-        <h3 class="text-gray-400 text-sm font-medium mb-2">Total Rewards</h3>
-        <div class="flex items-end">
-          <div class="number-display text-4xl md:text-5xl font-bold gold-text-gradient" id="counter4">0</div>
-          <div class="ml-2 mb-1">
-            <i class="fas fa-plus text-gold-light"></i>
-            <span class="text-gold-light text-sm font-semibold">Added</span>
-          </div>
-        </div>
-        <p class="text-gray-400 text-sm mt-2">Available for claim</p>
-      </div>
+<body class="flex flex-col items-center justify-center p-4 min-h-screen">
+  <!-- Profile Image -->
+  <div class="mb-10">
+    <div class="relative w-48 h-48">
+      <img
+        src="https://i.ibb.co.com/nMMsqNhM/Firefly-Gemini-Flash-Replacetheclothingwithaperfectlyfittednavyblueformalsuit-crispwhitedres948779-c.png"
+        alt="Profile" class="profile-image w-full h-full object-cover animate-float">
+      <div class="absolute -inset-4 border-2 border-gold/30 rounded-full animate-pulse"></div>
     </div>
+  </div>
 
-    <!-- Animated Gold Icons Section -->
-    <div class="mt-16 mb-10">
-      <h2 class="text-2xl md:text-3xl font-bold text-center gold-text-gradient mb-10">
-        <i class="fas fa-gem mr-3"></i>Animated Gold Icons
-      </h2>
+  <!-- Instruction Text -->
+  <div class="mb-8 text-center">
+    <p class="text-gray-300 text-lg mb-2">
+      <i class="fas fa-hand-point-down text-gold mr-2 animate-bounce"></i>
+      Click the box to open the lock
+    </p>
+    <p class="text-gray-400 text-sm">Watch the lock open and counter emerge with lightning effects</p>
+  </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-        <!-- Gold Crown Icon -->
-        <div class="flex flex-col items-center">
-          <div
-            class="w-24 h-24 bg-gradient-to-br from-gold-light via-gold to-gold-dark rounded-2xl flex items-center justify-center mb-4 animate-float">
-            <i class="fas fa-crown text-4xl text-gray-900"></i>
+  <!-- Animated Box -->
+  <div class="relative">
+    <div id="animatedBox" class="box-container mx-auto">
+      <div class="box-body">
+        <!-- Lightning Effect -->
+        <div id="lightning" class="lightning"></div>
+
+        <!-- Box Inside (Where counter appears) -->
+        <div id="boxInside" class="box-inside">
+          <!-- Light Beams -->
+          <div id="lightBeam1" class="light-beam" style="transform: rotate(30deg); top: 20%;"></div>
+          <div id="lightBeam2" class="light-beam" style="transform: rotate(60deg); top: 40%;"></div>
+          <div id="lightBeam3" class="light-beam" style="transform: rotate(90deg); top: 60%;"></div>
+          <div id="lightBeam4" class="light-beam" style="transform: rotate(120deg); top: 80%;"></div>
+
+          <!-- Counter Display -->
+          <div id="counterContainer" class="opacity-0">
+            <div id="counterDisplay" class="counter-number">1</div>
           </div>
-          <p class="text-gold font-semibold">Crown</p>
-          <p class="text-gray-400 text-sm text-center">Royalty & Premium</p>
         </div>
 
-        <!-- Gold Coin Icon -->
-        <div class="flex flex-col items-center">
-          <div
-            class="w-24 h-24 bg-gradient-to-br from-gold-light via-gold to-gold-dark rounded-2xl flex items-center justify-center mb-4 animate-float"
-            style="animation-delay: 0.5s;">
-            <i class="fas fa-coins text-4xl text-gray-900"></i>
-          </div>
-          <p class="text-gold font-semibold">Coins</p>
-          <p class="text-gray-400 text-sm text-center">Wealth & Value</p>
-        </div>
+        <!-- Box Lid with Lock -->
+        <div id="boxLid" class="box-lid animate-pulse-glow">
+          <!-- Keyhole -->
+          <div class="keyhole"></div>
 
-        <!-- Gold Trophy Icon -->
-        <div class="flex flex-col items-center">
-          <div
-            class="w-24 h-24 bg-gradient-to-br from-gold-light via-gold to-gold-dark rounded-2xl flex items-center justify-center mb-4 animate-float"
-            style="animation-delay: 1s;">
-            <i class="fas fa-trophy text-4xl text-gray-900"></i>
+          <div class="text-center p-6 tala-animation">
+            <div id="lockIcon" class="lock-icon mb-4">
+              <i class="fas fa-lock text-4xl text-gold"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Locked Box</h3>
+            <p class="text-gray-300">Click to unlock</p>
+            <div class="mt-4 text-sm text-gray-400">
+              <i class="fas fa-key text-gold mr-2"></i>
+              Click to open lock
+            </div>
           </div>
-          <p class="text-gold font-semibold">Trophy</p>
-          <p class="text-gray-400 text-sm text-center">Victory & Achievement</p>
-        </div>
-
-        <!-- Gold Gem Icon -->
-        <div class="flex flex-col items-center">
-          <div
-            class="w-24 h-24 bg-gradient-to-br from-gold-light via-gold to-gold-dark rounded-2xl flex items-center justify-center mb-4 animate-float"
-            style="animation-delay: 1.5s;">
-            <i class="fas fa-gem text-4xl text-gray-900"></i>
-          </div>
-          <p class="text-gold font-semibold">Gem</p>
-          <p class="text-gray-400 text-sm text-center">Purity & Luxury</p>
         </div>
       </div>
     </div>
 
-    <!-- Footer Info -->
-    <div class="mt-16 text-center text-gray-400">
-      <p class="mb-4">All numbers are animated and update automatically on page load.</p>
-      <div class="flex justify-center space-x-6 text-gold-light">
-        <i class="fas fa-sync-alt animate-spin-slow"></i>
-        <i class="fas fa-bolt"></i>
-        <i class="fas fa-shield-alt"></i>
+    <!-- Counter Progress -->
+    <div id="progressText" class="text-center mt-6 text-gray-300 opacity-0 transition-opacity duration-300">
+      <p class="text-sm">
+        Counting from
+        <span class="text-gold font-bold">1</span>
+        to
+        <span class="text-gold font-bold">1000</span>
+      </p>
+      <div class="w-48 h-2 bg-gray-700 rounded-full mx-auto mt-2 overflow-hidden">
+        <div id="progressBar" class="h-full bg-gradient-to-r from-gold via-yellow-500 to-gold" style="width: 0%"></div>
+      </div>
+      <div id="countSpeed" class="text-xs text-gray-500 mt-1">
+        <i class="fas fa-bolt text-gold mr-1"></i>
+        <span>Lightning speed counting...</span>
       </div>
     </div>
   </div>
 
+  <!-- Status Message -->
+  <div id="statusMessage" class="mt-8 text-center">
+    <p class="text-gray-400">
+      <i class="fas fa-lock text-gold mr-2"></i>
+      Box is locked
+    </p>
+  </div>
+
   <script>
-    // Number counter animation
-    function animateCounter(elementId, finalValue, duration = 2000) {
-      const element = document.getElementById(elementId);
-      const increment = finalValue / (duration / 16); // 60fps
-      let currentValue = 0;
+    // Create lightning flash effect
+    function createLightningFlash() {
+      const lightning = document.getElementById('lightning');
+      lightning.style.animation = 'lightning-flash 0.3s ease-out';
 
-      const timer = setInterval(() => {
-        currentValue += increment;
-        if (currentValue >= finalValue) {
-          element.textContent = formatNumber(finalValue);
-          clearInterval(timer);
-        } else {
-          element.textContent = formatNumber(Math.floor(currentValue));
-        }
-      }, 16);
-    }
-
-    // Format numbers with commas if needed
-    function formatNumber(num) {
-      if (num >= 1000) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      }
-      return num.toString();
-    }
-
-    // Start counters when page loads
-    document.addEventListener('DOMContentLoaded', function () {
-      // Start counter animations with a slight delay
+      // Add multiple flashes
       setTimeout(() => {
-        animateCounter('counter1', 3000);
+        lightning.style.animation = 'lightning-flash 0.2s ease-out';
         setTimeout(() => {
-          // Show the +1500 after the first counter completes
-          const counter1Element = document.getElementById('counter1');
-          counter1Element.innerHTML = '3000<span class="text-green-400 text-2xl ml-1">+1500</span>';
-        }, 2100);
-      }, 500);
+          lightning.style.animation = 'lightning-flash 0.15s ease-out';
+          setTimeout(() => {
+            lightning.style.animation = '';
+          }, 150);
+        }, 200);
+      }, 300);
+    }
 
-      setTimeout(() => {
-        animateCounter('counter2', 99);
-      }, 700);
+    // Create sparkle particles
+    function createSparkles(container, count = 12) {
+      for (let i = 0; i < count; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('sparkle');
 
-      setTimeout(() => {
-        animateCounter('counter3', 192);
-      }, 900);
+        // Random position around the box
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
 
-      setTimeout(() => {
-        animateCounter('counter4', 285510);
-      }, 1100);
+        // Random size
+        const size = 3 + Math.random() * 7;
 
-      // Add continuous subtle animation to gold icons
-      const goldIcons = document.querySelectorAll('.fa-crown, .fa-coins, .fa-trophy, .fa-gem');
-      goldIcons.forEach(icon => {
-        icon.addEventListener('mouseenter', function () {
-          this.classList.add('animate-bounce-slow');
-        });
+        sparkle.style.width = `${size}px`;
+        sparkle.style.height = `${size}px`;
+        sparkle.style.left = `${x}%`;
+        sparkle.style.top = `${y}%`;
 
-        icon.addEventListener('mouseleave', function () {
-          this.classList.remove('animate-bounce-slow');
-        });
+        // Animation
+        sparkle.style.animation = `sparkle 1s ease-out ${i * 0.08}s forwards`;
+
+        container.appendChild(sparkle);
+
+        // Remove sparkle after animation
+        setTimeout(() => {
+          sparkle.remove();
+        }, 1200);
+      }
+    }
+
+    // Create light beam effects
+    function createLightBeams() {
+      const beams = [
+        document.getElementById('lightBeam1'),
+        document.getElementById('lightBeam2'),
+        document.getElementById('lightBeam3'),
+        document.getElementById('lightBeam4')
+      ];
+
+      beams.forEach((beam, index) => {
+        setTimeout(() => {
+          beam.style.animation = `light-beam 1.5s ease-out ${index * 0.1}s forwards`;
+
+          // Reset after completion
+          setTimeout(() => {
+            beam.style.animation = '';
+          }, 1500);
+        }, index * 100);
       });
+    }
+
+    // Animate counter from 1 to 1000
+    function animateCounter(start, end, duration = 2000) {
+      const element = document.getElementById('counterDisplay');
+      const progressBar = document.getElementById('progressBar');
+      const countSpeed = document.getElementById('countSpeed');
+      const range = end - start;
+      let current = start;
+      let startTime = null;
+
+      // Update speed text
+      countSpeed.innerHTML = `
+        <i class="fas fa-bolt text-gold mr-1"></i>
+        <span>Counting at lightning speed: ${Math.floor(range / duration * 1000)} numbers/sec</span>
+      `;
+
+      function updateCounter(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function for smoother animation
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+
+        // Update counter
+        current = start + (range * easeOut);
+        element.textContent = Math.floor(current);
+
+        // Update progress bar
+        progressBar.style.width = `${easeOut * 100}%`;
+
+        // Add occasional lightning effect during counting
+        if (Math.random() > 0.95 && progress < 0.9) {
+          createLightningFlash();
+        }
+
+        if (progress < 1) {
+          requestAnimationFrame(updateCounter);
+        } else {
+          element.textContent = end;
+          // Final lightning effect
+          createLightningFlash();
+
+          // Add completion effect
+          setTimeout(() => {
+            element.style.animation = 'pulse-glow 1s ease-out 3';
+            setTimeout(() => {
+              element.style.animation = '';
+            }, 3000);
+          }, 100);
+
+          // Update speed text
+          countSpeed.innerHTML = `
+            <i class="fas fa-check-circle text-green-400 mr-1"></i>
+            <span class="text-green-400">Counting complete!</span>
+          `;
+        }
+      }
+
+      requestAnimationFrame(updateCounter);
+    }
+
+    // Box click handler
+    const box = document.getElementById('animatedBox');
+    const boxLid = document.getElementById('boxLid');
+    const lockIcon = document.getElementById('lockIcon');
+    const counterContainer = document.getElementById('counterContainer');
+    const progressText = document.getElementById('progressText');
+    const statusMessage = document.getElementById('statusMessage');
+
+    let isOpen = false;
+    let animationInProgress = false;
+
+    box.addEventListener('click', function () {
+      if (animationInProgress) return;
+
+      if (!isOpen) {
+        // Open the box
+        animationInProgress = true;
+        isOpen = true;
+
+        // Update status message
+        statusMessage.innerHTML = `
+          <p class="text-gold animate-pulse">
+            <i class="fas fa-unlock-alt mr-2"></i>
+            Unlocking box with lightning effects...
+          </p>
+        `;
+
+        // Animate the lock opening
+        lockIcon.style.animation = 'unlock 0.5s ease-out forwards';
+        lockIcon.innerHTML = '<i class="fas fa-unlock text-4xl text-green-400"></i>';
+
+        // Create lightning effect when lock opens
+        setTimeout(() => {
+          createLightningFlash();
+
+          // Animate the lid opening after lock opens
+          setTimeout(() => {
+            boxLid.style.animation = 'open-lid 0.8s ease-out forwards';
+            boxLid.style.pointerEvents = 'none';
+
+            // Create effects when lid opens
+            setTimeout(() => {
+              // Show progress text
+              progressText.style.opacity = '1';
+
+              // Show counter container
+              counterContainer.style.opacity = '1';
+              counterContainer.style.animation = 'counter-emerge 1.5s ease-out forwards';
+
+              // Create effects
+              createLightBeams();
+              createSparkles(boxLid);
+              createLightningFlash();
+
+              // Start counter animation
+              setTimeout(() => {
+                animateCounter(1, 1000);
+
+                // Update status when counter completes
+                setTimeout(() => {
+                  statusMessage.innerHTML = `
+                    <p class="text-green-400">
+                      <i class="fas fa-check-circle mr-2"></i>
+                      Counter complete! Box is unlocked and open
+                    </p>
+                  `;
+                }, 2100);
+              }, 300);
+
+              // Re-enable interaction
+              setTimeout(() => {
+                animationInProgress = false;
+              }, 1500);
+            }, 400);
+          }, 300);
+        }, 500);
+
+      } else {
+        // Close the box
+        animationInProgress = true;
+        isOpen = false;
+
+        // Update status message
+        statusMessage.innerHTML = `
+          <p class="text-gray-400">
+            <i class="fas fa-sync-alt mr-2 animate-spin"></i>
+            Locking box...
+          </p>
+        `;
+
+        // Hide progress text
+        progressText.style.opacity = '0';
+
+        // Hide counter with animation
+        counterContainer.style.animation = 'counter-emerge 0.5s ease-in reverse forwards';
+
+        // Close the lid
+        setTimeout(() => {
+          boxLid.style.animation = 'close-lid 0.8s ease-out forwards';
+
+          // Reset lock icon
+          setTimeout(() => {
+            lockIcon.style.animation = 'lock 0.5s ease-out forwards';
+            lockIcon.innerHTML = '<i class="fas fa-lock text-4xl text-gold"></i>';
+
+            // Reset counter
+            setTimeout(() => {
+              counterContainer.style.opacity = '0';
+              counterContainer.style.animation = '';
+              document.getElementById('counterDisplay').textContent = '1';
+              document.getElementById('progressBar').style.width = '0%';
+
+              // Reset lid pointer events
+              setTimeout(() => {
+                boxLid.style.pointerEvents = 'auto';
+                boxLid.style.animation = 'pulse-glow 2s infinite';
+
+                // Update status
+                statusMessage.innerHTML = `
+                  <p class="text-gray-400">
+                    <i class="fas fa-lock text-gold mr-2"></i>
+                    Box is locked
+                  </p>
+                `;
+
+                animationInProgress = false;
+              }, 300);
+            }, 500);
+          }, 500);
+        }, 300);
+      }
+    });
+
+    // Add hover effect to box
+    box.addEventListener('mouseenter', function () {
+      if (!animationInProgress && !isOpen) {
+        this.style.transform = 'scale(1.05)';
+        lockIcon.style.transform = 'scale(1.1)';
+        lockIcon.style.color = '#FFD700';
+      }
+    });
+
+    box.addEventListener('mouseleave', function () {
+      if (!animationInProgress && !isOpen) {
+        this.style.transform = 'scale(1)';
+        lockIcon.style.transform = 'scale(1)';
+        lockIcon.style.color = '#D4AF37';
+      }
+    });
+
+    // Add floating animation to profile image
+    const profileImg = document.querySelector('.profile-image');
+    profileImg.addEventListener('mouseenter', function () {
+      this.style.animation = 'float 2s ease-in-out infinite';
+    });
+
+    profileImg.addEventListener('mouseleave', function () {
+      this.style.animation = 'float 3s ease-in-out infinite';
+    });
+
+    // Add click sound effect simulation
+    box.addEventListener('mousedown', function () {
+      if (!animationInProgress) {
+        this.style.transform = 'scale(0.98)';
+      }
+    });
+
+    box.addEventListener('mouseup', function () {
+      if (!animationInProgress && !isOpen) {
+        this.style.transform = 'scale(1.05)';
+      }
     });
   </script>
 </body>
