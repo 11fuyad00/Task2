@@ -28,86 +28,20 @@
             'lightning-flash': 'lightning-flash 0.3s ease-out',
           },
           keyframes: {
-            'open-lid': {
-              '0%': { transform: 'rotateX(0deg)' },
-              '100%': { transform: 'rotateX(-120deg)' },
-            },
-            'close-lid': {
-              '0%': { transform: 'rotateX(-120deg)' },
-              '100%': { transform: 'rotateX(0deg)' },
-            },
-            'unlock': {
-              '0%': { transform: 'rotate(0deg) scale(1)' },
-              '50%': { transform: 'rotate(-30deg) scale(1.2)' },
-              '100%': { transform: 'rotate(0deg) scale(1)' },
-            },
-            'lock': {
-              '0%': { transform: 'rotate(0deg) scale(1)' },
-              '50%': { transform: 'rotate(30deg) scale(0.8)' },
-              '100%': { transform: 'rotate(0deg) scale(1)' },
-            },
+            'open-lid': { '0%': { transform: 'rotateX(0deg)' }, '100%': { transform: 'rotateX(-120deg)' } },
+            'close-lid': { '0%': { transform: 'rotateX(-120deg)' }, '100%': { transform: 'rotateX(0deg)' } },
+            'unlock': { '0%': { transform: 'rotate(0deg) scale(1)' }, '50%': { transform: 'rotate(-30deg) scale(1.2)' }, '100%': { transform: 'rotate(0deg) scale(1)' } },
+            'lock': { '0%': { transform: 'rotate(0deg) scale(1)' }, '50%': { transform: 'rotate(30deg) scale(0.8)' }, '100%': { transform: 'rotate(0deg) scale(1)' } },
             'counter-emerge': {
-              '0%': {
-                transform: 'translateY(100px) scale(0.3)',
-                opacity: '0',
-                filter: 'blur(10px)'
-              },
-              '60%': {
-                transform: 'translateY(-20px) scale(1.1)',
-                opacity: '1',
-                filter: 'blur(2px)'
-              },
-              '100%': {
-                transform: 'translateY(0) scale(1)',
-                opacity: '1',
-                filter: 'blur(0)'
-              }
+              '0%': { transform: 'translateY(120%) scale(0.3)', opacity: '0', filter: 'blur(10px)' },
+              '60%': { transform: 'translateY(-10px) scale(1.05)', opacity: '1', filter: 'blur(2px)' },
+              '100%': { transform: 'translateY(0) scale(1)', opacity: '1', filter: 'blur(0)' }
             },
-            'pulse-glow': {
-              '0%, 100%': {
-                boxShadow: '0 0 15px rgba(212, 175, 55, 0.6)',
-                transform: 'scale(1)'
-              },
-              '50%': {
-                boxShadow: '0 0 30px rgba(212, 175, 55, 0.9)',
-                transform: 'scale(1.02)'
-              },
-            },
-            'float': {
-              '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
-              '50%': { transform: 'translateY(-15px) rotate(1deg)' },
-            },
-            'light-beam': {
-              '0%': {
-                transform: 'translateX(-100%) rotate(45deg)',
-                opacity: '0'
-              },
-              '50%': {
-                opacity: '0.8'
-              },
-              '100%': {
-                transform: 'translateX(100%) rotate(45deg)',
-                opacity: '0'
-              },
-            },
-            'sparkle': {
-              '0%': {
-                transform: 'scale(0) rotate(0deg)',
-                opacity: '0'
-              },
-              '50%': {
-                transform: 'scale(1.3) rotate(180deg)',
-                opacity: '1'
-              },
-              '100%': {
-                transform: 'scale(0) rotate(360deg)',
-                opacity: '0'
-              }
-            },
-            'lightning-flash': {
-              '0%, 100%': { opacity: '0' },
-              '50%': { opacity: '1' },
-            }
+            'pulse-glow': { '0%, 100%': { boxShadow: '0 0 15px rgba(212, 175, 55, 0.6)', transform: 'scale(1)' }, '50%': { boxShadow: '0 0 30px rgba(212, 175, 55, 0.9)', transform: 'scale(1.02)' } },
+            'float': { '0%, 100%': { transform: 'translateY(0) rotate(0deg)' }, '50%': { transform: 'translateY(-15px) rotate(1deg)' } },
+            'light-beam': { '0%': { transform: 'translateX(-100%) rotate(45deg)', opacity: '0' }, '50%': { opacity: '0.8' }, '100%': { transform: 'translateX(100%) rotate(45deg)', opacity: '0' } },
+            'sparkle': { '0%': { transform: 'scale(0) rotate(0deg)', opacity: '0' }, '50%': { transform: 'scale(1.3) rotate(180deg)', opacity: '1' }, '100%': { transform: 'scale(0) rotate(360deg)', opacity: '0' } },
+            'lightning-flash': { '0%, 100%': { opacity: '0' }, '50%': { opacity: '1' } }
           }
         }
       }
@@ -254,6 +188,18 @@
     .tala-animation {
       position: relative;
     }
+
+    #clickToLockText {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 25;
+    }
   </style>
 </head>
 
@@ -313,6 +259,9 @@
               <i class="fas fa-key text-gold mr-2"></i>
               Click to open lock
             </div>
+
+            <!-- New Click to Lock text -->
+            <div id="clickToLockText">Click to Lock</div>
           </div>
         </div>
       </div>
@@ -345,75 +294,40 @@
   </div>
 
   <script>
-    // Create lightning flash effect
+    // --- Existing functions for lightning, sparkles, beams, counter ---
     function createLightningFlash() {
       const lightning = document.getElementById('lightning');
       lightning.style.animation = 'lightning-flash 0.3s ease-out';
-
-      // Add multiple flashes
-      setTimeout(() => {
-        lightning.style.animation = 'lightning-flash 0.2s ease-out';
-        setTimeout(() => {
-          lightning.style.animation = 'lightning-flash 0.15s ease-out';
-          setTimeout(() => {
-            lightning.style.animation = '';
-          }, 150);
-        }, 200);
-      }, 300);
+      setTimeout(() => { lightning.style.animation = 'lightning-flash 0.2s ease-out'; setTimeout(() => { lightning.style.animation = 'lightning-flash 0.15s ease-out'; setTimeout(() => { lightning.style.animation = ''; }, 150); }, 200); }, 300);
     }
 
-    // Create sparkle particles
     function createSparkles(container, count = 12) {
       for (let i = 0; i < count; i++) {
         const sparkle = document.createElement('div');
         sparkle.classList.add('sparkle');
-
-        // Random position around the box
         const x = Math.random() * 100;
         const y = Math.random() * 100;
-
-        // Random size
         const size = 3 + Math.random() * 7;
-
         sparkle.style.width = `${size}px`;
         sparkle.style.height = `${size}px`;
         sparkle.style.left = `${x}%`;
         sparkle.style.top = `${y}%`;
-
-        // Animation
         sparkle.style.animation = `sparkle 1s ease-out ${i * 0.08}s forwards`;
-
         container.appendChild(sparkle);
-
-        // Remove sparkle after animation
-        setTimeout(() => {
-          sparkle.remove();
-        }, 1200);
+        setTimeout(() => { sparkle.remove(); }, 1200);
       }
     }
 
-    // Create light beam effects
     function createLightBeams() {
-      const beams = [
-        document.getElementById('lightBeam1'),
-        document.getElementById('lightBeam2'),
-        document.getElementById('lightBeam3'),
-        document.getElementById('lightBeam4')
-      ];
-
+      const beams = [document.getElementById('lightBeam1'), document.getElementById('lightBeam2'), document.getElementById('lightBeam3'), document.getElementById('lightBeam4')];
       beams.forEach((beam, index) => {
         setTimeout(() => {
           beam.style.animation = `light-beam 1.5s ease-out ${index * 0.1}s forwards`;
-
-          // Reset after completion
-          setTimeout(() => {
-            beam.style.animation = '';
-          }, 1500);
+          setTimeout(() => { beam.style.animation = ''; }, 1500);
         }, index * 100);
       });
     }
 
-    // Animate counter from 1 to 1000
     function animateCounter(start, end, duration = 2000) {
       const element = document.getElementById('counterDisplay');
       const progressBar = document.getElementById('progressBar');
@@ -422,228 +336,113 @@
       let current = start;
       let startTime = null;
 
-      // Update speed text
-      countSpeed.innerHTML = `
-        <i class="fas fa-bolt text-gold mr-1"></i>
-        <span>Counting at lightning speed: ${Math.floor(range / duration * 1000)} numbers/sec</span>
-      `;
+      countSpeed.innerHTML = `<i class="fas fa-bolt text-gold mr-1"></i>
+      <span>Counting at lightning speed: ${Math.floor(range / duration * 1000)} numbers/sec</span>`;
 
       function updateCounter(timestamp) {
         if (!startTime) startTime = timestamp;
         const elapsed = timestamp - startTime;
         const progress = Math.min(elapsed / duration, 1);
-
-        // Easing function for smoother animation
         const easeOut = 1 - Math.pow(1 - progress, 3);
-
-        // Update counter
         current = start + (range * easeOut);
         element.textContent = Math.floor(current);
-
-        // Update progress bar
         progressBar.style.width = `${easeOut * 100}%`;
 
-        // Add occasional lightning effect during counting
-        if (Math.random() > 0.95 && progress < 0.9) {
-          createLightningFlash();
-        }
+        if (Math.random() > 0.95 && progress < 0.9) createLightningFlash();
 
-        if (progress < 1) {
-          requestAnimationFrame(updateCounter);
-        } else {
+        if (progress < 1) requestAnimationFrame(updateCounter);
+        else {
           element.textContent = end;
-          // Final lightning effect
           createLightningFlash();
-
-          // Add completion effect
           setTimeout(() => {
             element.style.animation = 'pulse-glow 1s ease-out 3';
-            setTimeout(() => {
-              element.style.animation = '';
-            }, 3000);
+            setTimeout(() => { element.style.animation = ''; }, 3000);
           }, 100);
-
-          // Update speed text
-          countSpeed.innerHTML = `
-            <i class="fas fa-check-circle text-green-400 mr-1"></i>
-            <span class="text-green-400">Counting complete!</span>
-          `;
+          countSpeed.innerHTML = `<i class="fas fa-check-circle text-green-400 mr-1"></i>
+          <span class="text-green-400">Counting complete!</span>`;
         }
       }
 
       requestAnimationFrame(updateCounter);
     }
 
-    // Box click handler
+    // --- Box click handler with updated text ---
     const box = document.getElementById('animatedBox');
     const boxLid = document.getElementById('boxLid');
     const lockIcon = document.getElementById('lockIcon');
     const counterContainer = document.getElementById('counterContainer');
     const progressText = document.getElementById('progressText');
     const statusMessage = document.getElementById('statusMessage');
+    const talaAnimation = boxLid.querySelector('.tala-animation');
+    const clickToLockText = document.getElementById('clickToLockText');
 
     let isOpen = false;
     let animationInProgress = false;
 
     box.addEventListener('click', function () {
       if (animationInProgress) return;
-
       if (!isOpen) {
-        // Open the box
         animationInProgress = true;
         isOpen = true;
 
-        // Update status message
-        statusMessage.innerHTML = `
-          <p class="text-gold animate-pulse">
-            <i class="fas fa-unlock-alt mr-2"></i>
-            Unlocking box with lightning effects...
-          </p>
-        `;
+        // Hide original text, show Click to Lock
+        talaAnimation.style.opacity = '0';
+        clickToLockText.style.opacity = '1';
 
-        // Animate the lock opening
+        statusMessage.innerHTML = `<p class="text-gold animate-pulse"><i class="fas fa-unlock-alt mr-2"></i>Unlocking box with lightning effects...</p>`;
+
         lockIcon.style.animation = 'unlock 0.5s ease-out forwards';
         lockIcon.innerHTML = '<i class="fas fa-unlock text-4xl text-green-400"></i>';
 
-        // Create lightning effect when lock opens
         setTimeout(() => {
           createLightningFlash();
-
-          // Animate the lid opening after lock opens
           setTimeout(() => {
             boxLid.style.animation = 'open-lid 0.8s ease-out forwards';
             boxLid.style.pointerEvents = 'none';
-
-            // Create effects when lid opens
             setTimeout(() => {
-              // Show progress text
               progressText.style.opacity = '1';
-
-              // Show counter container
               counterContainer.style.opacity = '1';
               counterContainer.style.animation = 'counter-emerge 1.5s ease-out forwards';
-
-              // Create effects
               createLightBeams();
               createSparkles(boxLid);
               createLightningFlash();
-
-              // Start counter animation
-              setTimeout(() => {
-                animateCounter(1, 1000);
-
-                // Update status when counter completes
-                setTimeout(() => {
-                  statusMessage.innerHTML = `
-                    <p class="text-green-400">
-                      <i class="fas fa-check-circle mr-2"></i>
-                      Counter complete! Box is unlocked and open
-                    </p>
-                  `;
-                }, 2100);
-              }, 300);
-
-              // Re-enable interaction
-              setTimeout(() => {
-                animationInProgress = false;
-              }, 1500);
+              setTimeout(() => { animateCounter(1, 1000); }, 300);
+              setTimeout(() => { animationInProgress = false; }, 1500);
             }, 400);
           }, 300);
         }, 500);
 
       } else {
-        // Close the box
         animationInProgress = true;
         isOpen = false;
 
-        // Update status message
-        statusMessage.innerHTML = `
-          <p class="text-gray-400">
-            <i class="fas fa-sync-alt mr-2 animate-spin"></i>
-            Locking box...
-          </p>
-        `;
+        // Show original text, hide Click to Lock
+        talaAnimation.style.opacity = '1';
+        clickToLockText.style.opacity = '0';
 
-        // Hide progress text
+        statusMessage.innerHTML = `<p class="text-gray-400"><i class="fas fa-sync-alt mr-2 animate-spin"></i>Locking box...</p>`;
         progressText.style.opacity = '0';
-
-        // Hide counter with animation
         counterContainer.style.animation = 'counter-emerge 0.5s ease-in reverse forwards';
 
-        // Close the lid
         setTimeout(() => {
           boxLid.style.animation = 'close-lid 0.8s ease-out forwards';
-
-          // Reset lock icon
           setTimeout(() => {
             lockIcon.style.animation = 'lock 0.5s ease-out forwards';
             lockIcon.innerHTML = '<i class="fas fa-lock text-4xl text-gold"></i>';
-
-            // Reset counter
             setTimeout(() => {
               counterContainer.style.opacity = '0';
               counterContainer.style.animation = '';
               document.getElementById('counterDisplay').textContent = '1';
               document.getElementById('progressBar').style.width = '0%';
-
-              // Reset lid pointer events
               setTimeout(() => {
                 boxLid.style.pointerEvents = 'auto';
                 boxLid.style.animation = 'pulse-glow 2s infinite';
-
-                // Update status
-                statusMessage.innerHTML = `
-                  <p class="text-gray-400">
-                    <i class="fas fa-lock text-gold mr-2"></i>
-                    Box is locked
-                  </p>
-                `;
-
+                statusMessage.innerHTML = `<p class="text-gray-400"><i class="fas fa-lock text-gold mr-2"></i>Box is locked</p>`;
                 animationInProgress = false;
               }, 300);
             }, 500);
           }, 500);
         }, 300);
-      }
-    });
-
-    // Add hover effect to box
-    box.addEventListener('mouseenter', function () {
-      if (!animationInProgress && !isOpen) {
-        this.style.transform = 'scale(1.05)';
-        lockIcon.style.transform = 'scale(1.1)';
-        lockIcon.style.color = '#FFD700';
-      }
-    });
-
-    box.addEventListener('mouseleave', function () {
-      if (!animationInProgress && !isOpen) {
-        this.style.transform = 'scale(1)';
-        lockIcon.style.transform = 'scale(1)';
-        lockIcon.style.color = '#D4AF37';
-      }
-    });
-
-    // Add floating animation to profile image
-    const profileImg = document.querySelector('.profile-image');
-    profileImg.addEventListener('mouseenter', function () {
-      this.style.animation = 'float 2s ease-in-out infinite';
-    });
-
-    profileImg.addEventListener('mouseleave', function () {
-      this.style.animation = 'float 3s ease-in-out infinite';
-    });
-
-    // Add click sound effect simulation
-    box.addEventListener('mousedown', function () {
-      if (!animationInProgress) {
-        this.style.transform = 'scale(0.98)';
-      }
-    });
-
-    box.addEventListener('mouseup', function () {
-      if (!animationInProgress && !isOpen) {
-        this.style.transform = 'scale(1.05)';
       }
     });
   </script>
